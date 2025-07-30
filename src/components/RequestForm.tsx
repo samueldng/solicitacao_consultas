@@ -186,8 +186,19 @@ const RequestForm: React.FC = () => {
     // URL da função Netlify (proxy)
     const proxyUrl = '/.netlify/functions/google-sheets-proxy';
     
+    // Mapear IDs para nomes completos
+    const unidadeNome = getUnidadeNome(formData.unidadeSolicitante);
+    const especialidadeNome = getEspecialidadeNome(formData.especialidade);
+    
+    // Dados a serem enviados com nomes completos
+    const dataToSend = {
+      ...formData,
+      unidadeSolicitante: unidadeNome,
+      especialidade: especialidadeNome
+    };
+    
     try {
-      const response = await axios.post(proxyUrl, formData, {
+      const response = await axios.post(proxyUrl, dataToSend, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -235,6 +246,60 @@ const RequestForm: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Função para obter o nome da unidade pelo ID
+  const getUnidadeNome = (id: string): string => {
+    const unidades: {[key: string]: string} = {
+      '1': '1 Centro de Saude Aldeia',
+      '2': '2 Centro de Saude Alto Fogoso',
+      '3': '3 Centro de Saude Bairro Areal',
+      '4': '4 Centro de Saude Bairro da Areia',
+      '5': '5 Centro de Saude Bela Vista',
+      '6': '6 Centro de Saude Bom Principio',
+      '7': '7 Centro de Saude Brejinho',
+      '8': '8 Centro de Saude Cohab I',
+      '9': '9 Centro de Saude da Luziania',
+      '10': '10 Centro de Saude do Bairro Jucaral',
+      '11': '11 Centro de Saude do Centro',
+      '12': '12 Centro de Saude Esperanca',
+      '13': '13 Centro de Saude Irineu A Nogueira',
+      '14': '14 Centro de Saude Santos Dumont',
+      '15': '15 Centro de Saude Sao Jose das Verdades',
+      '16': '16 Centro de Saude Seco das Mulatas',
+      '17': '17 Centro de Saude Setubal',
+      '18': '18 Centro de Saude Terra do Sol',
+      '19': '19 Centro de Saude Trizidela',
+      '20': '20 Centro de Saude Vila Nova',
+      '21': '21 Hospital Maria Socorro Brandao',
+      '22': '22 Hospital Materno Infantil',
+      '23': '23 Unidade Basica de Saude Bernardo Marcelino',
+      '24': '24 Unidade Basica de Saude Leonez Muniz Queiroz',
+      '25': '25 Unidade Basica de Saude Pedro Alves Santos',
+      '26': '26 Unidade de Saude do Povoado Piratininga'
+    };
+    return unidades[id] || id;
+  };
+
+  // Função para obter o nome da especialidade pelo ID
+  const getEspecialidadeNome = (id: string): string => {
+    const especialidades: {[key: string]: string} = {
+      '1': '1. MÉDICO CARDIOLOGISTA',
+      '2': '2. MÉDICO CIRURGIÃO GERAL',
+      '3': '3. MÉDICO DERMATOLOGISTA',
+      '4': '4. MÉDICO GINECOLOGISTA',
+      '5': '5. MÉDICO MASTOLOGISTA',
+      '6': '6. MÉDICO NEFROLOGISTA',
+      '7': '7. MÉDICO NEUROLOGISTA',
+      '8': '8. MÉDICO OFTALMOLOGISTA',
+      '9': '9. MÉDICO ORTOPEDISTA',
+      '10': '10. MÉDICO OBSTETRA',
+      '11': '11. MÉDICO PEDIATRA',
+      '12': '12. MÉDICO PROCTOLOGISTA',
+      '13': '13. MÉDICO PSIQUIATRA',
+      '14': '14. MÉDICO UROLOGISTA'
+    };
+    return especialidades[id] || id;
   };
 
   return (

@@ -10,24 +10,44 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[]>(defaultUsers);
+  const [users, setUsers] = useState<User[]>(defaultUsers); // Sempre usar users.ts como base
 
   useEffect(() => {
+    // Carregar apenas o usuário logado atual
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        localStorage.removeItem('currentUser');
+      }
     }
 
-    const savedUsers = localStorage.getItem('systemUsers');
-    if (savedUsers) {
-      setUsers(JSON.parse(savedUsers));
+    // Carregar usuários adicionais criados pelo admin (se houver)
+    const additionalUsers = localStorage.getItem('additionalUsers');
+    if (additionalUsers) {
+      try {
+        const parsed = JSON.parse(additionalUsers);
+        // Combinar usuários do users.ts com os adicionais
+        setUsers([...defaultUsers, ...parsed]);
+      } catch (error) {
+        // Se der erro, usar apenas os usuários padrão
+        setUsers(defaultUsers);
+      }
+    } else {
+      // Usar apenas os usuários do users.ts
+      setUsers(defaultUsers);
     }
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
+    console.log('Tentando login com:', { username, password });
+    
     const foundUser = users.find(
       u => u.username === username && u.password === password && u.isActive
     );
+    
+    console.log('Usuário encontrado:', foundUser);
 
     if (foundUser) {
       const updatedUser = {
@@ -35,15 +55,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         lastLogin: new Date().toISOString()
       };
       
-      setUser(updatedUser);
-      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      // Salvar apenas o usuário logado (sem senha por segurança)
+      const userToStore = {
+        ...updatedUser,
+        password: '' // Remover senha do localStorage
+      };
       
-      // Atualizar último login no array de usuários
-      const updatedUsers = users.map(u => 
-        u.id === foundUser.id ? updatedUser : u
-      );
-      setUsers(updatedUsers);
-      localStorage.setItem('systemUsers', JSON.stringify(updatedUsers));
+      setUser(updatedUser);
+      localStorage.setItem('currentUser', JSON.stringify(userToStore));
       
       return true;
     }
@@ -61,6 +80,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   return (
     <AuthContext.Provider value={{
       user,
+      users,
       login,
       logout,
       isAuthenticated,
@@ -73,8 +93,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };

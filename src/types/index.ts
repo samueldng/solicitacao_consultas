@@ -10,6 +10,7 @@ export interface User {
 
 export interface AuthContextType {
   user: User | null;
+  users: User[]; // Adicionar esta linha
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;

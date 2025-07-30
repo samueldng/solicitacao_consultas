@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AdminContextType } from '../types';
 import { defaultUsers } from '../data/users';
+import { hashPassword, encryptData, decryptData } from '../utils/crypto';
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
@@ -23,19 +24,47 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
     const savedLog = localStorage.getItem('activityLog');
     
     if (savedUsers) {
-      setUsers(JSON.parse(savedUsers));
+      try {
+        // Tentar descriptografar primeiro, se falhar, usar dados não criptografados (compatibilidade)
+        const decryptedUsers = decryptData(savedUsers);
+        setUsers(JSON.parse(decryptedUsers));
+      } catch (error) {
+        // Se falhar na descriptografia, pode ser dados antigos não criptografados
+        try {
+          setUsers(JSON.parse(savedUsers));
+          // Migrar para formato criptografado
+          const users = JSON.parse(savedUsers);
+          localStorage.setItem('systemUsers', encryptData(JSON.stringify(users)));
+        } catch (parseError) {
+          console.error('Erro ao carregar usuários:', parseError);
+          setUsers(defaultUsers);
+          localStorage.setItem('systemUsers', encryptData(JSON.stringify(defaultUsers)));
+        }
+      }
     } else {
-      localStorage.setItem('systemUsers', JSON.stringify(defaultUsers));
+      localStorage.setItem('systemUsers', encryptData(JSON.stringify(defaultUsers)));
+      setUsers(defaultUsers);
     }
     
     if (savedLog) {
-      setActivityLog(JSON.parse(savedLog));
+      try {
+        // ActivityLog pode não estar criptografado ainda, então tentamos ambos
+        const decryptedLog = decryptData(savedLog);
+        setActivityLog(JSON.parse(decryptedLog));
+      } catch (error) {
+        try {
+          setActivityLog(JSON.parse(savedLog));
+        } catch (parseError) {
+          console.error('Erro ao carregar log de atividades:', parseError);
+          setActivityLog([]);
+        }
+      }
     }
   }, []);
 
   const saveUsers = (updatedUsers: User[]) => {
     setUsers(updatedUsers);
-    localStorage.setItem('systemUsers', JSON.stringify(updatedUsers));
+    localStorage.setItem('systemUsers', encryptData(JSON.stringify(updatedUsers)));
   };
 
   const logActivity = (action: string, userId: string, details: string) => {
@@ -52,9 +81,11 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
     localStorage.setItem('activityLog', JSON.stringify(updatedLog));
   };
 
+  // Na função addUser:
   const addUser = (userData: Omit<User, 'id' | 'createdAt'>) => {
     const newUser: User = {
       ...userData,
+      password: hashPassword(userData.password), // Hash da senha
       id: Date.now().toString(),
       createdAt: new Date().toISOString()
     };
@@ -62,14 +93,22 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
     saveUsers(updatedUsers);
     logActivity('CREATE', newUser.id, `Usuário criado: ${newUser.username}`);
   };
-
+  
+  // Na função updateUser:
   const updateUser = (id: string, updates: Partial<User>) => {
+    const updatedData = { ...updates };
+    
+    if (updates.password) {
+      updatedData.password = hashPassword(updates.password);
+    }
+    
     const updatedUsers = users.map(user => 
-      user.id === id ? { ...user, ...updates } : user
+      user.id === id ? { ...user, ...updatedData } : user
     );
     saveUsers(updatedUsers);
     logActivity('UPDATE', id, `Usuário atualizado: ${updates.username || 'dados alterados'}`);
   };
+
 
   const deleteUser = (id: string) => {
     const userToDelete = users.find(u => u.id === id);

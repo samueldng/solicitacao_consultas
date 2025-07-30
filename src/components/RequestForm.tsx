@@ -183,40 +183,47 @@ const RequestForm: React.FC = () => {
     setMessage('');
     setMessageType('');
     
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxWXCbhrQqrX1UNpB1-cEB7I54OF4yVTwm4n_mcRyomrvY6G0zOQ_1UbQphu62YhxY1/exec';
+    // URL da função Netlify (proxy)
+    const proxyUrl = '/.netlify/functions/google-sheets-proxy';
     
     try {
-      await axios.post(scriptUrl, formData, {
+      const response = await axios.post(proxyUrl, formData, {
         headers: {
           'Content-Type': 'application/json',
         },
-        timeout: 10000, // 10 segundos de timeout
+        timeout: 15000, // 15 segundos de timeout
       });
       
-      setMessage('Solicitação enviada com sucesso!');
-      setMessageType('success');
+      if (response.data.success) {
+        setMessage('Solicitação enviada com sucesso!');
+        setMessageType('success');
+        
+        // Limpar formulário após sucesso
+        setFormData({ 
+          nomePaciente: '', 
+          cpfPaciente: '', 
+          unidadeSolicitante: '', 
+          numeroCelular: '', 
+          observacao: '', 
+          nomeSolicitante: '', 
+          especialidade: '' 
+        });
+        setErrors({});
+      } else {
+        setMessage(response.data.message || 'Erro ao enviar solicitação.');
+        setMessageType('error');
+      }
       
-      // Limpar formulário após sucesso
-      setFormData({ 
-        nomePaciente: '', 
-        cpfPaciente: '', 
-        unidadeSolicitante: '', 
-        numeroCelular: '', 
-        observacao: '', 
-        nomeSolicitante: '', 
-        especialidade: '' 
-      });
-      setErrors({});
     } catch (error) {
       console.error('Erro ao enviar solicitação:', error);
       
       if (axios.isAxiosError(error)) {
         if (error.code === 'ECONNABORTED') {
           setMessage('Timeout: A solicitação demorou muito para responder. Tente novamente.');
-        } else if (error.response?.status === 401) {
-          setMessage('Erro de autenticação. Verifique a configuração do Google Apps Script.');
-        } else if (error.response && error.response.status >= 500) {
+        } else if (error.response?.status === 500) {
           setMessage('Erro no servidor. Tente novamente em alguns minutos.');
+        } else if (error.response?.data?.message) {
+          setMessage(error.response.data.message);
         } else {
           setMessage('Erro ao enviar solicitação. Verifique sua conexão e tente novamente.');
         }

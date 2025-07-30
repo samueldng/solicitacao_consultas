@@ -183,7 +183,7 @@ const RequestForm: React.FC = () => {
     setMessage('');
     setMessageType('');
     
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbz7Jlge7GaWZtWwjl9-o1d6Uj1ER_mqsRlxPls1dclpdShZ9039bDPAISjGBkV0ibiN/exec';
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxWXCbhrQqrX1UNpB1-cEB7I54OF4yVTwm4n_mcRyomrvY6G0zOQ_1UbQphu62YhxY1/exec';
     
     try {
       await axios.post(scriptUrl, formData, {

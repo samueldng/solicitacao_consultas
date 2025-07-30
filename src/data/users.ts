@@ -4,7 +4,7 @@ export const defaultUsers: User[] = [
   {
     id: '1',
     username: 'aldeia',
-    password: 'aldeia2025',
+    password: 'aldeia20251',
     unitName: 'Centro de Saude Aldeia',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -12,7 +12,7 @@ export const defaultUsers: User[] = [
   {
     id: '2',
     username: 'altofogoso',
-    password: 'altofogoso2025',
+    password: 'altofogoso20252',
     unitName: 'Centro de Saude Alto Fogoso',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -20,7 +20,7 @@ export const defaultUsers: User[] = [
   {
     id: '3',
     username: 'bairroareal',
-    password: 'bairroareal2025',
+    password: 'bairroareal20253',
     unitName: 'Centro de Saude Bairro Areal',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -28,7 +28,7 @@ export const defaultUsers: User[] = [
   {
     id: '4',
     username: 'bairroareia',
-    password: 'bairroareia2025',
+    password: 'bairroareia20254',
     unitName: 'Centro de Saude Bairro da Areia',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -36,7 +36,7 @@ export const defaultUsers: User[] = [
   {
     id: '5',
     username: 'belavista',
-    password: 'belavista2025',
+    password: 'belavista20255',
     unitName: 'Centro de Saude Bela Vista',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -44,7 +44,7 @@ export const defaultUsers: User[] = [
   {
     id: '6',
     username: 'bomprincipo',
-    password: 'bomprincipo2025',
+    password: 'bomprincipo20256',
     unitName: 'Centro de Saude Bom Principio',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -52,7 +52,7 @@ export const defaultUsers: User[] = [
   {
     id: '7',
     username: 'brejinho',
-    password: 'brejinho2025',
+    password: 'brejinho20257',
     unitName: 'Centro de Saude Brejinho',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -60,7 +60,7 @@ export const defaultUsers: User[] = [
   {
     id: '8',
     username: 'cohab1',
-    password: 'cohab12025',
+    password: 'cohab120258',
     unitName: 'Centro de Saude Cohab I',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -68,7 +68,7 @@ export const defaultUsers: User[] = [
   {
     id: '9',
     username: 'luziania',
-    password: 'luziania2025',
+    password: 'luziania20259',
     unitName: 'Centro de Saude da Luziania',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -76,7 +76,7 @@ export const defaultUsers: User[] = [
   {
     id: '10',
     username: 'jucaral',
-    password: 'jucaral2025',
+    password: 'jucaral20250',
     unitName: 'Centro de Saude do Bairro Jucaral',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -84,7 +84,7 @@ export const defaultUsers: User[] = [
   {
     id: '11',
     username: 'centro',
-    password: 'centro2025',
+    password: 'centro20251',
     unitName: 'Centro de Saude do Centro',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -92,7 +92,7 @@ export const defaultUsers: User[] = [
   {
     id: '12',
     username: 'esperanca',
-    password: 'esperanca2025',
+    password: 'esperanca20252',
     unitName: 'Centro de Saude Esperanca',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -100,7 +100,7 @@ export const defaultUsers: User[] = [
   {
     id: '13',
     username: 'irineu',
-    password: 'irineu2025',
+    password: 'irineu20253',
     unitName: 'Centro de Saude Irineu A Nogueira',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -108,7 +108,7 @@ export const defaultUsers: User[] = [
   {
     id: '14',
     username: 'santosdumont',
-    password: 'santosdumont2025',
+    password: 'santosdumont20254',
     unitName: 'Centro de Saude Santos Dumont',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -116,7 +116,7 @@ export const defaultUsers: User[] = [
   {
     id: '15',
     username: 'saojose',
-    password: 'saojose2025',
+    password: 'saojose20255',
     unitName: 'Centro de Saude Sao Jose das Verdades',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -124,7 +124,7 @@ export const defaultUsers: User[] = [
   {
     id: '16',
     username: 'secomulatas',
-    password: 'secomulatas2025',
+    password: 'secomulatas20256',
     unitName: 'Centro de Saude Seco das Mulatas',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -132,7 +132,7 @@ export const defaultUsers: User[] = [
   {
     id: '17',
     username: 'setubal',
-    password: 'setubal2025',
+    password: 'setubal20257',
     unitName: 'Centro de Saude Setubal',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -140,7 +140,7 @@ export const defaultUsers: User[] = [
   {
     id: '18',
     username: 'terrasol',
-    password: 'terrasol2025',
+    password: 'terrasol20258',
     unitName: 'Centro de Saude Terra do Sol',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -148,7 +148,7 @@ export const defaultUsers: User[] = [
   {
     id: '19',
     username: 'trizidela',
-    password: 'trizidela2025',
+    password: 'trizidela20259',
     unitName: 'Centro de Saude Trizidela',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -156,7 +156,7 @@ export const defaultUsers: User[] = [
   {
     id: '20',
     username: 'vilanova',
-    password: 'vilanova2025',
+    password: 'vilanova20251',
     unitName: 'Centro de Saude Vila Nova',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -164,7 +164,7 @@ export const defaultUsers: User[] = [
   {
     id: '21',
     username: 'hospital.mariasocorro',
-    password: 'mariasocorro2025',
+    password: 'mariasocorro20252',
     unitName: 'Hospital Maria Socorro Brandao',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -172,7 +172,7 @@ export const defaultUsers: User[] = [
   {
     id: '22',
     username: 'hospital.materno',
-    password: 'materno2025',
+    password: 'materno20253',
     unitName: 'Hospital Materno Infantil',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -180,7 +180,7 @@ export const defaultUsers: User[] = [
   {
     id: '23',
     username: 'bernardomarcelino',
-    password: 'bernardomarcelino2025',
+    password: 'bernardomarcelino20254',
     unitName: 'Unidade Basica de Saude Bernardo Marcelino',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -188,7 +188,7 @@ export const defaultUsers: User[] = [
   {
     id: '24',
     username: 'leonez',
-    password: 'leonez2025',
+    password: 'leonez20255',
     unitName: 'Unidade Basica de Saude Leonez Muniz Queiroz',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -196,7 +196,7 @@ export const defaultUsers: User[] = [
   {
     id: '25',
     username: 'pedroalves',
-    password: 'pedroalves2025',
+    password: 'pedroalves20256',
     unitName: 'Unidade Basica de Saude Pedro Alves Santos',
     isActive: true,
     createdAt: new Date().toISOString()
@@ -204,7 +204,7 @@ export const defaultUsers: User[] = [
   {
     id: '26',
     username: 'piratininga',
-    password: 'piratininga2025',
+    password: 'piratininga20257',
     unitName: 'Unidade de Saude do Povoado Piratininga',
     isActive: true,
     createdAt: new Date().toISOString()

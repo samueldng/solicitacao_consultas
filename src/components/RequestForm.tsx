@@ -587,6 +587,18 @@ const RequestForm: React.FC = () => {
           </div>
         </form>
       </div>
+      
+      {/* Rodapé com assinatura do setor */}
+      <footer style={{
+        textAlign: 'center',
+        marginTop: '30px',
+        padding: '20px',
+        borderTop: '1px solid #e0e0e0',
+        color: '#666',
+        fontSize: '14px'
+      }}>
+        © 2025 Superintendência de T.I
+      </footer>
     </div>
   );
 };

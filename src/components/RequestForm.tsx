@@ -186,17 +186,13 @@ const RequestForm: React.FC = () => {
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbz7Jlge7GaWZtWwjl9-o1d6Uj1ER_mqsRlxPls1dclpdShZ9039bDPAISjGBkV0ibiN/exec';
     
     try {
-      const response = await fetch(scriptUrl, {
-        method: 'POST',
-        mode: 'no-cors', // Importante para evitar CORS
+      await axios.post(scriptUrl, formData, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        timeout: 10000, // 10 segundos de timeout
       });
       
-      // Com mode: 'no-cors', não conseguimos ler a resposta
-      // mas se chegou até aqui, provavelmente funcionou
       setMessage('Solicitação enviada com sucesso!');
       setMessageType('success');
       
@@ -212,9 +208,23 @@ const RequestForm: React.FC = () => {
       });
       setErrors({});
     } catch (error) {
-      setMessage('Erro ao enviar solicitação. Tente novamente.');
+      console.error('Erro ao enviar solicitação:', error);
+      
+      if (axios.isAxiosError(error)) {
+        if (error.code === 'ECONNABORTED') {
+          setMessage('Timeout: A solicitação demorou muito para responder. Tente novamente.');
+        } else if (error.response?.status === 401) {
+          setMessage('Erro de autenticação. Verifique a configuração do Google Apps Script.');
+        } else if (error.response?.status >= 500) {
+          setMessage('Erro no servidor. Tente novamente em alguns minutos.');
+        } else {
+          setMessage('Erro ao enviar solicitação. Verifique sua conexão e tente novamente.');
+        }
+      } else {
+        setMessage('Erro inesperado. Tente novamente.');
+      }
+      
       setMessageType('error');
-      console.error('Erro:', error);
     } finally {
       setLoading(false);
     }

@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/globals.css';
 
 const RequestForm: React.FC = () => {
+  const { user } = useAuth();
+  
   const [formData, setFormData] = useState({
     nomePaciente: '',
     cpfPaciente: '',
@@ -17,6 +20,50 @@ const RequestForm: React.FC = () => {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error' | ''>('');
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  // Função para obter o ID da unidade pelo nome
+  const getUnidadeIdByName = (unitName: string): string => {
+    const unidadeMap: {[key: string]: string} = {
+      'Centro de Saude Aldeia': '1',
+      'Centro de Saude Alto Fogoso': '2',
+      'Centro de Saude Bairro Areal': '3',
+      'Centro de Saude Bairro da Areia': '4',
+      'Centro de Saude Bela Vista': '5',
+      'Centro de Saude Bom Principio': '6',
+      'Centro de Saude Brejinho': '7',
+      'Centro de Saude Cohab I': '8',
+      'Centro de Saude da Luziania': '9',
+      'Centro de Saude do Bairro Jucaral': '10',
+      'Centro de Saude do Centro': '11',
+      'Centro de Saude Esperanca': '12',
+      'Centro de Saude Irineu A Nogueira': '13',
+      'Centro de Saude Santos Dumont': '14',
+      'Centro de Saude Sao Jose das Verdades': '15',
+      'Centro de Saude Seco das Mulatas': '16',
+      'Centro de Saude Setubal': '17',
+      'Centro de Saude Terra do Sol': '18',
+      'Centro de Saude Trizidela': '19',
+      'Centro de Saude Vila Nova': '20',
+      'Hospital Maria Socorro Brandao': '21',
+      'Hospital Materno Infantil': '22',
+      'Unidade Basica de Saude Bernardo Marcelino': '23',
+      'Unidade Basica de Saude Leonez Muniz Queiroz': '24',
+      'Unidade Basica de Saude Pedro Alves Santos': '25',
+      'Unidade de Saude do Povoado Piratininga': '26'
+    };
+    return unidadeMap[unitName] || '';
+  };
+
+  // useEffect para definir automaticamente a unidade do usuário logado
+  useEffect(() => {
+    if (user && user.unitName && user.username !== 'admin') {
+      const unidadeId = getUnidadeIdByName(user.unitName);
+      setFormData(prev => ({
+        ...prev,
+        unidadeSolicitante: unidadeId
+      }));
+    }
+  }, [user]);
 
   // Função para validar CPF
   const validateCPF = (cpf: string): boolean => {
@@ -116,9 +163,9 @@ const RequestForm: React.FC = () => {
       newErrors.cpfPaciente = 'CPF inválido';
     }
 
-    // Validar unidade solicitante
+    // Validar unidade solicitante (deve estar preenchida automaticamente)
     if (!formData.unidadeSolicitante) {
-      newErrors.unidadeSolicitante = 'Unidade solicitante é obrigatória';
+      newErrors.unidadeSolicitante = 'Erro: Unidade solicitante não identificada';
     }
 
     // Validar telefone
@@ -209,11 +256,12 @@ const RequestForm: React.FC = () => {
         setMessage('Solicitação enviada com sucesso!');
         setMessageType('success');
         
-        // Limpar formulário após sucesso
+        // Limpar formulário após sucesso (mantendo a unidade)
+        const unidadeAtual = formData.unidadeSolicitante;
         setFormData({ 
           nomePaciente: '', 
           cpfPaciente: '', 
-          unidadeSolicitante: '', 
+          unidadeSolicitante: unidadeAtual, // Manter a unidade do usuário
           numeroCelular: '', 
           observacao: '', 
           nomeSolicitante: '', 
@@ -231,7 +279,7 @@ const RequestForm: React.FC = () => {
       if (axios.isAxiosError(error)) {
         if (error.code === 'ECONNABORTED') {
           setMessage('Timeout: A solicitação demorou muito para responder. Tente novamente.');
-        } else if (error.response?.status === 500) {
+        } else if (error.response && error.response.status >= 500) {
           setMessage('Erro no servidor. Tente novamente em alguns minutos.');
         } else if (error.response?.data?.message) {
           setMessage(error.response.data.message);
@@ -377,46 +425,23 @@ const RequestForm: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="unidadeSolicitante" className="form-label">
-              Unidade Solicitante <span style={{ color: 'var(--danger)' }}>*</span>
+            <label className="form-label">
+              Unidade Solicitante
             </label>
-            <select
-              id="unidadeSolicitante"
-              name="unidadeSolicitante"
-              className={`form-input ${errors.unidadeSolicitante ? 'error' : ''}`}
-              value={formData.unidadeSolicitante}
-              onChange={handleChange}
-              required
-              disabled={loading}
+            <div 
+              className="form-input" 
+              style={{ 
+                backgroundColor: 'var(--light-gray)', 
+                color: 'var(--dark-gray)',
+                border: '2px solid var(--medium-gray)',
+                cursor: 'not-allowed',
+                display: 'flex',
+                alignItems: 'center',
+                minHeight: '50px'
+              }}
             >
-              <option value="">Selecione a unidade</option>
-              <option value="1">1 Centro de Saude Aldeia</option>
-              <option value="2">2 Centro de Saude Alto Fogoso</option>
-              <option value="3">3 Centro de Saude Bairro Areal</option>
-              <option value="4">4 Centro de Saude Bairro da Areia</option>
-              <option value="5">5 Centro de Saude Bela Vista</option>
-              <option value="6">6 Centro de Saude Bom Principio</option>
-              <option value="7">7 Centro de Saude Brejinho</option>
-              <option value="8">8 Centro de Saude Cohab I</option>
-              <option value="9">9 Centro de Saude da Luziania</option>
-              <option value="10">10 Centro de Saude do Bairro Jucaral</option>
-              <option value="11">11 Centro de Saude do Centro</option>
-              <option value="12">12 Centro de Saude Esperanca</option>
-              <option value="13">13 Centro de Saude Irineu A Nogueira</option>
-              <option value="14">14 Centro de Saude Santos Dumont</option>
-              <option value="15">15 Centro de Saude Sao Jose das Verdades</option>
-              <option value="16">16 Centro de Saude Seco das Mulatas</option>
-              <option value="17">17 Centro de Saude Setubal</option>
-              <option value="18">18 Centro de Saude Terra do Sol</option>
-              <option value="19">19 Centro de Saude Trizidela</option>
-              <option value="20">20 Centro de Saude Vila Nova</option>
-              <option value="21">21 Hospital Maria Socorro Brandao</option>
-              <option value="22">22 Hospital Materno Infantil</option>
-              <option value="23">23 Unidade Basica de Saude Bernardo Marcelino</option>
-              <option value="24">24 Unidade Basica de Saude Leonez Muniz Queiroz</option>
-              <option value="25">25 Unidade Basica de Saude Pedro Alves Santos</option>
-              <option value="26">26 Unidade de Saude do Povoado Piratininga</option>
-            </select>
+              {user?.unitName || 'Unidade não identificada'}
+            </div>
             {errors.unidadeSolicitante && (
               <div style={{ color: 'var(--danger)', fontSize: '14px', marginTop: '5px' }}>
                 {errors.unidadeSolicitante}

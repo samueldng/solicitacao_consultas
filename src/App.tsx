@@ -5,6 +5,7 @@ import { AdminProvider } from './contexts/AdminContext';
 import LoginForm from './components/LoginForm';
 import Dashboard from './components/Dashboard';
 import AdminPanel from './components/AdminPanel';
+import RequestForm from './components/RequestForm';
 import './styles/globals.css';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({ 
@@ -46,6 +47,14 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute adminOnly>
             <AdminPanel />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/request" 
+        element={
+          <ProtectedRoute>
+            <RequestForm />
           </ProtectedRoute>
         } 
       />

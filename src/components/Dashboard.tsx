@@ -1,23 +1,24 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Dashboard: React.FC = () => {
   const { user, logout, isAdmin } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirecionar automaticamente para o Google Forms após 3 segundos
+    // Redirecionar automaticamente para o formulário interno após 3 segundos
     if (!isAdmin) {
       const timer = setTimeout(() => {
-        window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLScaEvAGFDYayY0pUz9FGjq1v_J4dpPART877HrXBmxqlFU6BQ/viewform';
+        navigate('/request');
       }, 3000);
 
       return () => clearTimeout(timer);
     }
-  }, [isAdmin]);
+  }, [isAdmin, navigate]);
 
   const handleRedirectNow = () => {
-    window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLScaEvAGFDYayY0pUz9FGjq1v_J4dpPART877HrXBmxqlFU6BQ/viewform';
+    navigate('/request');
   };
 
   if (isAdmin) {

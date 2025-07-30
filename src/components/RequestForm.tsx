@@ -297,7 +297,7 @@ const RequestForm: React.FC = () => {
           nomePaciente: '',
           cpfPaciente: '',
           cns: '', // Incluir o novo campo
-          unidadeSolicitante: user?.unitName || '',
+          unidadeSolicitante: user?.unitName ? getUnidadeIdByName(user.unitName) : '',
           numeroCelular: '',
           observacao: '',
           nomeSolicitante: '',

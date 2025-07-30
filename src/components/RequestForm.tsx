@@ -293,7 +293,6 @@ const RequestForm: React.FC = () => {
         setMessageType('success');
         
         // Limpar formulário após sucesso (mantendo a unidade)
-        const unidadeAtual = formData.unidadeSolicitante;
         setFormData({
           nomePaciente: '',
           cpfPaciente: '',

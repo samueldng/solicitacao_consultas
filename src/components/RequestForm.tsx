@@ -215,7 +215,7 @@ const RequestForm: React.FC = () => {
           setMessage('Timeout: A solicitação demorou muito para responder. Tente novamente.');
         } else if (error.response?.status === 401) {
           setMessage('Erro de autenticação. Verifique a configuração do Google Apps Script.');
-        } else if (error.response?.status >= 500) {
+        } else if (error.response && error.response.status >= 500) {
           setMessage('Erro no servidor. Tente novamente em alguns minutos.');
         } else {
           setMessage('Erro ao enviar solicitação. Verifique sua conexão e tente novamente.');

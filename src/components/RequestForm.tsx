@@ -299,6 +299,14 @@ const RequestForm: React.FC = () => {
       especialidade: especialidadeNome
     };
     
+    // ✅ ADICIONE ESTE DEBUG AQUI:
+    console.log('=== DEBUG DADOS ENVIADOS ===');
+    console.log('FormData original:', formData);
+    console.log('CNS no formData:', formData.cns);
+    console.log('DataToSend completo:', dataToSend);
+    console.log('CNS no dataToSend:', dataToSend.cns);
+    console.log('===============================');
+    
     try {
       const response = await axios.post(proxyUrl, dataToSend, {
         headers: {
@@ -691,3 +699,4 @@ const RequestForm: React.FC = () => {
 
 export default RequestForm;
 
+  

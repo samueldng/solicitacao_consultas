@@ -9,6 +9,7 @@ const RequestForm: React.FC = () => {
   const [formData, setFormData] = useState({
     nomePaciente: '',
     cpfPaciente: '',
+    cns: '', // Novo campo CNS
     unidadeSolicitante: '',
     numeroCelular: '',
     observacao: '',
@@ -145,29 +146,57 @@ const RequestForm: React.FC = () => {
     }
   };
 
+  // Função para validar CNS - Cartão Nacional de Saúde
+  const validateCNS = (cns: string): boolean => {
+    // Remove todos os caracteres não numéricos
+    const cleanCNS = cns.replace(/\D/g, '');
+    
+    if (cleanCNS.length !== 15) {
+      return false;
+    }
+    
+    // Calcula a soma ponderada
+    const sum = cleanCNS
+      .split('')
+      .reduce((acc, digit, index) => acc + parseInt(digit) * (15 - index), 0);
+    
+    return sum % 11 === 0;
+  };
+
+  // Função para formatar CNS (apenas números)
+  const formatCNS = (value: string): string => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.slice(0, 15); // Limita a 15 dígitos
+  };
+
   // Função para validar todos os campos
   const validateForm = (): boolean => {
     const newErrors: {[key: string]: string} = {};
-
+  
     // Validar nome do paciente
     if (!formData.nomePaciente.trim()) {
       newErrors.nomePaciente = 'Nome do paciente é obrigatório';
     } else if (formData.nomePaciente.trim().length < 2) {
       newErrors.nomePaciente = 'Nome deve ter pelo menos 2 caracteres';
     }
-
+  
     // Validar CPF
     if (!formData.cpfPaciente.trim()) {
       newErrors.cpfPaciente = 'CPF é obrigatório';
     } else if (!validateCPF(formData.cpfPaciente)) {
       newErrors.cpfPaciente = 'CPF inválido';
     }
-
+  
+    // Validar CNS (opcional, mas se preenchido deve ser válido)
+    if (formData.cns.trim() && !validateCNS(formData.cns)) {
+      newErrors.cns = 'CNS inválido - deve conter 15 dígitos válidos';
+    }
+  
     // Validar unidade solicitante (deve estar preenchida automaticamente)
     if (!formData.unidadeSolicitante) {
       newErrors.unidadeSolicitante = 'Erro: Unidade solicitante não identificada';
     }
-
+  
     // Validar telefone
     if (!formData.numeroCelular.trim()) {
       newErrors.numeroCelular = 'Número de celular é obrigatório';
@@ -175,18 +204,23 @@ const RequestForm: React.FC = () => {
       newErrors.numeroCelular = 'Número de telefone inválido';
     }
 
+    // Validar observação (agora obrigatória)
+    if (!formData.observacao.trim()) {
+      newErrors.observacao = 'Observação é obrigatória';
+    }
+  
     // Validar nome do solicitante
     if (!formData.nomeSolicitante.trim()) {
       newErrors.nomeSolicitante = 'Nome do solicitante é obrigatório';
     } else if (formData.nomeSolicitante.trim().length < 2) {
       newErrors.nomeSolicitante = 'Nome deve ter pelo menos 2 caracteres';
     }
-
+  
     // Validar especialidade
     if (!formData.especialidade) {
       newErrors.especialidade = 'Especialidade é obrigatória';
     }
-
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -198,21 +232,23 @@ const RequestForm: React.FC = () => {
     // Aplicar formatação específica em tempo real
     if (name === 'cpfPaciente') {
       formattedValue = formatCPF(value);
+    } else if (name === 'cns') {
+      formattedValue = formatCNS(value);
     } else if (name === 'numeroCelular') {
       formattedValue = formatPhone(value);
     }
 
-    setFormData({ ...formData, [name]: formattedValue });
-    
-    // Limpar erro específico do campo quando o usuário começar a digitar
+    setFormData(prev => ({
+      ...prev,
+      [name]: formattedValue
+    }));
+
+    // Limpar erro do campo quando o usuário começar a digitar
     if (errors[name]) {
-      setErrors({ ...errors, [name]: '' });
-    }
-    
-    // Limpar mensagens quando o usuário começar a digitar
-    if (message) {
-      setMessage('');
-      setMessageType('');
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
     }
   };
 
@@ -258,14 +294,15 @@ const RequestForm: React.FC = () => {
         
         // Limpar formulário após sucesso (mantendo a unidade)
         const unidadeAtual = formData.unidadeSolicitante;
-        setFormData({ 
-          nomePaciente: '', 
-          cpfPaciente: '', 
-          unidadeSolicitante: unidadeAtual, // Manter a unidade do usuário
-          numeroCelular: '', 
-          observacao: '', 
-          nomeSolicitante: '', 
-          especialidade: '' 
+        setFormData({
+          nomePaciente: '',
+          cpfPaciente: '',
+          cns: '', // Incluir o novo campo
+          unidadeSolicitante: user?.unitName || '',
+          numeroCelular: '',
+          observacao: '',
+          nomeSolicitante: '',
+          especialidade: ''
         });
         setErrors({});
       } else {
@@ -454,6 +491,31 @@ const RequestForm: React.FC = () => {
           </div>
 
           <div className="form-group">
+            <label htmlFor="cns" className="form-label">
+              CNS - Cartão Nacional de Saúde
+            </label>
+            <input
+              type="text"
+              id="cns"
+              name="cns"
+              className={`form-input ${errors.cns ? 'error' : ''}`}
+              value={formData.cns}
+              onChange={handleChange}
+              placeholder="000000000000000 (15 dígitos)"
+              disabled={loading}
+              maxLength={15}
+            />
+            {errors.cns && (
+              <div style={{ color: 'var(--danger)', fontSize: '14px', marginTop: '5px' }}>
+                {errors.cns}
+              </div>
+            )}
+            <div style={{ color: 'var(--medium-gray)', fontSize: '12px', marginTop: '5px' }}>
+              Campo opcional - Digite apenas números (15 dígitos)
+            </div>
+          </div>
+
+          <div className="form-group">
             <label className="form-label">
               Unidade Solicitante
             </label>
@@ -560,19 +622,25 @@ const RequestForm: React.FC = () => {
 
           <div className="form-group">
             <label htmlFor="observacao" className="form-label">
-              Observação
+              Observação <span style={{ color: 'var(--danger)' }}>*</span>
             </label>
             <textarea
               id="observacao"
               name="observacao"
-              className="form-input"
+              className={`form-input ${errors.observacao ? 'error' : ''}`}
               value={formData.observacao}
               onChange={handleChange}
-              placeholder="Informações adicionais sobre a solicitação (opcional)"
+              placeholder="Informações adicionais sobre a solicitação"
               rows={4}
+              required
               disabled={loading}
               style={{ resize: 'vertical', minHeight: '100px' }}
             />
+            {errors.observacao && (
+              <div style={{ color: 'var(--danger)', fontSize: '14px', marginTop: '5px' }}>
+                {errors.observacao}
+              </div>
+            )}
           </div>
 
           <div style={{ textAlign: 'center', marginTop: '30px' }}>

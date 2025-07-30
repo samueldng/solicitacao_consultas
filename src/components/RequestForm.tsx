@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import '../styles/globals.css';
 
 const RequestForm: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   
   const [formData, setFormData] = useState({
     nomePaciente: '',
@@ -350,27 +350,56 @@ const RequestForm: React.FC = () => {
     return especialidades[id] || id;
   };
 
+  // Função para lidar com o logout
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <div className="container">
       <div className="card" style={{ maxWidth: '800px', margin: '20px auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <img 
-            src="/logo-nova-bacabal.png" 
-            alt="Nova Bacabal - Secretaria de Saúde" 
-            className="logo"
-            style={{
-              maxWidth: '280px',
-              width: '100%',
-              height: 'auto',
-              marginBottom: '20px'
+        {/* Cabeçalho com botão de logout */}
+        <div style={{ position: 'relative', marginBottom: '30px' }}>
+          <button 
+            type="button" 
+            onClick={handleLogout}
+            style={{ 
+              position: 'absolute',
+              top: '0',
+              right: '0',
+              backgroundColor: '#dc3545', 
+              color: 'white', 
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              zIndex: 1
             }}
-          />
-          <h2 style={{ color: 'var(--dark-gray)', marginBottom: '10px' }}>
-            Solicitação de Consulta Especializada
-          </h2>
-          <p style={{ color: 'var(--medium-gray)', fontSize: '16px' }}>
-            Preencha todos os campos obrigatórios para solicitar uma consulta
-          </p>
+          >
+            Sair do Sistema
+          </button>
+          
+          <div style={{ textAlign: 'center' }}>
+            <img 
+              src="/logo-nova-bacabal.png" 
+              alt="Nova Bacabal - Secretaria de Saúde" 
+              className="logo"
+              style={{
+                maxWidth: '280px',
+                width: '100%',
+                height: 'auto',
+                marginBottom: '20px'
+              }}
+            />
+            <h2 style={{ color: 'var(--dark-gray)', marginBottom: '10px' }}>
+              Solicitação de Consulta Especializada
+            </h2>
+            <p style={{ color: 'var(--medium-gray)', fontSize: '16px' }}>
+              Preencha todos os campos obrigatórios para solicitar uma consulta
+            </p>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit}>

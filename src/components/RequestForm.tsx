@@ -58,12 +58,18 @@ const RequestForm: React.FC = () => {
 
   // useEffect para definir automaticamente a unidade do usuário logado
   useEffect(() => {
+    console.log('useEffect executado - user:', user);
     if (user && user.unitName && user.username !== 'admin') {
       const unidadeId = getUnidadeIdByName(user.unitName);
-      setFormData(prev => ({
-        ...prev,
-        unidadeSolicitante: unidadeId
-      }));
+      console.log('Definindo unidade:', user.unitName, '-> ID:', unidadeId);
+      if (unidadeId) {
+        setFormData(prev => ({
+          ...prev,
+          unidadeSolicitante: unidadeId
+        }));
+      } else {
+        console.error('Unidade não encontrada no mapeamento:', user.unitName);
+      }
     }
   }, [user]);
 
@@ -196,7 +202,20 @@ const RequestForm: React.FC = () => {
   
     // Validar unidade solicitante (deve estar preenchida automaticamente)
     if (!formData.unidadeSolicitante) {
-      newErrors.unidadeSolicitante = 'Erro: Unidade solicitante não identificada';
+      if (!user) {
+        newErrors.unidadeSolicitante = 'Erro: Usuário não está logado';
+      } else if (!user.unitName) {
+        newErrors.unidadeSolicitante = 'Erro: Usuário não possui unidade associada';
+      } else if (user.username === 'admin') {
+        newErrors.unidadeSolicitante = 'Erro: Admin deve selecionar uma unidade';
+      } else {
+        const unidadeId = getUnidadeIdByName(user.unitName);
+        if (!unidadeId) {
+          newErrors.unidadeSolicitante = `Erro: Unidade "${user.unitName}" não encontrada no mapeamento`;
+        } else {
+          newErrors.unidadeSolicitante = 'Erro: Unidade solicitante não identificada';
+        }
+      }
     }
   
     // Validar telefone
@@ -287,6 +306,14 @@ const RequestForm: React.FC = () => {
       especialidade: especialidadeNome
     };
     
+    // ✅ ADICIONE ESTE DEBUG AQUI:
+    console.log('=== DEBUG DADOS ENVIADOS ===');
+    console.log('FormData original:', formData);
+    console.log('CNS no formData:', formData.cns);
+    console.log('DataToSend completo:', dataToSend);
+    console.log('CNS no dataToSend:', dataToSend.cns);
+    console.log('===============================');
+    
     try {
       const response = await axios.post(proxyUrl, dataToSend, {
         headers: {
@@ -300,11 +327,10 @@ const RequestForm: React.FC = () => {
         setMessageType('success');
         
         // Limpar formulário após sucesso (mantendo a unidade)
-        const unidadeAtual = formData.unidadeSolicitante;
         setFormData({
           nomePaciente: '',
           cpfPaciente: '',
-          cns: '',
+          cns: '', // Incluir o novo campo
           unidadeSolicitante: user?.unitName || '',
           numeroCelular: '',
           tipoConsulta: '', // Adicionar o campo que estava faltando
@@ -704,3 +730,5 @@ const RequestForm: React.FC = () => {
 };
 
 export default RequestForm;
+
+  

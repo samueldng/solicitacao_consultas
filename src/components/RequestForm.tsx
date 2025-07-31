@@ -9,9 +9,10 @@ const RequestForm: React.FC = () => {
   const [formData, setFormData] = useState({
     nomePaciente: '',
     cpfPaciente: '',
-    cns: '', // Novo campo CNS
+    cns: '',
     unidadeSolicitante: '',
     numeroCelular: '',
+    tipoConsulta: '', // Novo campo para primeira consulta ou retorno
     observacao: '',
     nomeSolicitante: '',
     especialidade: ''
@@ -170,6 +171,7 @@ const RequestForm: React.FC = () => {
   };
 
   // Função para validar todos os campos
+  // Função para validar todos os campos
   const validateForm = (): boolean => {
     const newErrors: {[key: string]: string} = {};
   
@@ -203,8 +205,13 @@ const RequestForm: React.FC = () => {
     } else if (!validatePhone(formData.numeroCelular)) {
       newErrors.numeroCelular = 'Número de telefone inválido';
     }
-
-    // Validar observação (agora obrigatória)
+  
+    // Validar tipo de consulta
+    if (!formData.tipoConsulta) {
+      newErrors.tipoConsulta = 'Tipo de consulta é obrigatório';
+    }
+  
+    // Validar observação (obrigatória)
     if (!formData.observacao.trim()) {
       newErrors.observacao = 'Observação é obrigatória';
     }
@@ -297,9 +304,10 @@ const RequestForm: React.FC = () => {
         setFormData({
           nomePaciente: '',
           cpfPaciente: '',
-          cns: '', // Incluir o novo campo
+          cns: '',
           unidadeSolicitante: user?.unitName || '',
           numeroCelular: '',
+          tipoConsulta: '', // Adicionar o campo que estava faltando
           observacao: '',
           nomeSolicitante: '',
           especialidade: ''
@@ -558,6 +566,30 @@ const RequestForm: React.FC = () => {
             {errors.numeroCelular && (
               <div style={{ color: 'var(--danger)', fontSize: '14px', marginTop: '5px' }}>
                 {errors.numeroCelular}
+              </div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="tipoConsulta" className="form-label">
+              Tipo de Consulta <span style={{ color: 'var(--danger)' }}>*</span>
+            </label>
+            <select
+              id="tipoConsulta"
+              name="tipoConsulta"
+              className={`form-input ${errors.tipoConsulta ? 'error' : ''}`}
+              value={formData.tipoConsulta}
+              onChange={handleChange}
+              required
+              disabled={loading}
+            >
+              <option value="">Selecione o tipo de consulta</option>
+              <option value="primeira">Primeira Consulta</option>
+              <option value="retorno">Retorno</option>
+            </select>
+            {errors.tipoConsulta && (
+              <div style={{ color: 'var(--danger)', fontSize: '14px', marginTop: '5px' }}>
+                {errors.tipoConsulta}
               </div>
             )}
           </div>

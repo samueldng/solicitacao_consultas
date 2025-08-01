@@ -12,7 +12,8 @@ const RequestForm: React.FC = () => {
     cns: '',
     unidadeSolicitante: '',
     numeroCelular: '',
-    tipoConsulta: '', // Novo campo para primeira consulta ou retorno
+    tipoConsulta: '',
+    tipoExame: '', // Novo campo para tipo de exame
     observacao: '',
     nomeSolicitante: '',
     especialidade: ''
@@ -245,9 +246,14 @@ const RequestForm: React.FC = () => {
       newErrors.nomeSolicitante = 'Nome deve ter pelo menos 2 caracteres';
     }
   
-    // Validar especialidade
-    if (!formData.especialidade) {
+    // Validar especialidade (obrigatória apenas se o tipo de consulta não for 'exame')
+    if (formData.tipoConsulta !== 'exame' && !formData.especialidade) {
       newErrors.especialidade = 'Especialidade é obrigatória';
+    }
+
+    // Validar tipo de exame (obrigatório apenas se o tipo de consulta for 'exame')
+    if (formData.tipoConsulta === 'exame' && !formData.tipoExame) {
+      newErrors.tipoExame = 'Tipo de exame é obrigatório';
     }
   
     setErrors(newErrors);
@@ -333,10 +339,11 @@ const RequestForm: React.FC = () => {
         setFormData({
           nomePaciente: '',
           cpfPaciente: '',
-          cns: '', // Incluir o novo campo
+          cns: '',
           unidadeSolicitante: user?.unitName || '',
           numeroCelular: '',
-          tipoConsulta: '', // Adicionar o campo que estava faltando
+          tipoConsulta: '',
+          tipoExame: '', // Incluir o novo campo
           observacao: '',
           nomeSolicitante: '',
           especialidade: ''
@@ -625,6 +632,36 @@ const RequestForm: React.FC = () => {
               </div>
             )}
           </div>
+{/* Campo Tipo de Exame - aparece apenas quando tipo de consulta for 'exame' */}
+          {formData.tipoConsulta === 'exame' && (
+            <div className="form-group">
+              <label htmlFor="tipoExame" className="form-label">
+                Tipo de Exame <span style={{ color: 'var(--danger)' }}>*</span>
+              </label>
+              <select
+                id="tipoExame"
+                name="tipoExame"
+                className={`form-input ${errors.tipoExame ? 'error' : ''}`}
+                value={formData.tipoExame}
+                onChange={handleChange}
+                required
+                disabled={loading}
+              >
+                <option value="">Selecione o tipo de exame</option>
+                <option value="1">1. ULTRASSONOGRAFIA</option>
+                <option value="2">2. RAIO-X</option>
+                <option value="3">3. MAMOGRAFIA</option>
+                <option value="4">4. COLPOSCOPIA</option>
+                <option value="5">5. ELETROCARDIOGRAMA</option>
+              </select>
+              {errors.tipoExame && (
+                <div style={{ color: 'var(--danger)', fontSize: '14px', marginTop: '5px' }}>
+                  {errors.tipoExame}
+                </div>
+              )}
+            </div>
+          )}
+
 
           <div className="form-group">
             <label htmlFor="nomeSolicitante" className="form-label">
@@ -649,8 +686,8 @@ const RequestForm: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="especialidade" className="form-label">
-              Especialidade <span style={{ color: 'var(--danger)' }}>*</span>
+                        <label htmlFor="especialidade" className="form-label">
+              Especialidade {formData.tipoConsulta !== 'exame' && <span style={{ color: 'var(--danger)' }}>*</span>}
             </label>
             <select
               id="especialidade"
@@ -658,7 +695,7 @@ const RequestForm: React.FC = () => {
               className={`form-input ${errors.especialidade ? 'error' : ''}`}
               value={formData.especialidade}
               onChange={handleChange}
-              required
+              required={formData.tipoConsulta !== 'exame'}
               disabled={loading}
             >
               <option value="">Selecione a especialidade</option>
@@ -737,4 +774,4 @@ const RequestForm: React.FC = () => {
 
 export default RequestForm;
 
-  
+         

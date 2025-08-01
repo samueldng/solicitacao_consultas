@@ -28,7 +28,7 @@ exports.handler = async (event, context) => {
 
   try {
     // URL do seu Google Apps Script
-    const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbxWXCbhrQqrX1UNpB1-cEB7I54OF4yVTwm4n_mcRyomrvY6G0zOQ_1UbQphu62YhxY1/exec';
+    const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbzcvNtROd4AhxJSZJy7SCJQSz4dsmA_Q5hzfCFdEfHu7EhwzVZ-NHHW7a-hShJtF_BJ/exec';
     
     // Dados recebidos do frontend
     const formData = JSON.parse(event.body);

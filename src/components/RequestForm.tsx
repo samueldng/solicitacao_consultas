@@ -648,11 +648,11 @@ const RequestForm: React.FC = () => {
                 disabled={loading}
               >
                 <option value="">Selecione o tipo de exame</option>
-                <option value="1">1. ULTRASSONOGRAFIA</option>
-                <option value="2">2. RAIO-X</option>
-                <option value="3">3. MAMOGRAFIA</option>
-                <option value="4">4. COLPOSCOPIA</option>
-                <option value="5">5. ELETROCARDIOGRAMA</option>
+                <option value="ULTRASSONOGRAFIA">ULTRASSONOGRAFIA</option>
+                <option value="RAIO-X">RAIO-X</option>
+                <option value="MAMOGRAFIA">MAMOGRAFIA</option>
+                <option value="COLPOSCOPIA">COLPOSCOPIA</option>
+                <option value="ELETROCARDIOGRAMA">ELETROCARDIOGRAMA</option>
               </select>
               {errors.tipoExame && (
                 <div style={{ color: 'var(--danger)', fontSize: '14px', marginTop: '5px' }}>

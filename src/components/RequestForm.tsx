@@ -24,6 +24,7 @@ const RequestForm: React.FC = () => {
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   // Função para obter o ID da unidade pelo nome
+  // Função para obter o ID da unidade pelo nome
   const getUnidadeIdByName = (unitName: string): string => {
     const unidadeMap: {[key: string]: string} = {
       'Centro de Saude Aldeia': '1',
@@ -51,7 +52,9 @@ const RequestForm: React.FC = () => {
       'Unidade Basica de Saude Bernardo Marcelino': '23',
       'Unidade Basica de Saude Leonez Muniz Queiroz': '24',
       'Unidade Basica de Saude Pedro Alves Santos': '25',
-      'Unidade de Saude do Povoado Piratininga': '26'
+      'Unidade de Saude do Povoado Piratininga': '26',
+      'Centro de Especialidades': '27',
+      'Policlinica': '28'
     };
     return unidadeMap[unitName] || '';
   };
@@ -395,7 +398,9 @@ const RequestForm: React.FC = () => {
       '23': '23 Unidade Basica de Saude Bernardo Marcelino',
       '24': '24 Unidade Basica de Saude Leonez Muniz Queiroz',
       '25': '25 Unidade Basica de Saude Pedro Alves Santos',
-      '26': '26 Unidade de Saude do Povoado Piratininga'
+      '26': '26 Unidade de Saude do Povoado Piratininga',
+      '27': '27 Centro de Especialidades',
+      '28': '28 Policlinica'
     };
     return unidades[id] || id;
   };
@@ -465,7 +470,7 @@ const RequestForm: React.FC = () => {
               }}
             />
             <h2 style={{ color: 'var(--dark-gray)', marginBottom: '10px' }}>
-              Solicitação de Consulta Especializada
+              Solicitação de Consultas e Exames
             </h2>
             <p style={{ color: 'var(--medium-gray)', fontSize: '16px' }}>
               Preencha todos os campos obrigatórios para solicitar uma consulta
@@ -612,6 +617,7 @@ const RequestForm: React.FC = () => {
               <option value="">Selecione o tipo de consulta</option>
               <option value="primeira">Primeira Consulta</option>
               <option value="retorno">Retorno</option>
+              <option value="exame">Exames</option>
             </select>
             {errors.tipoConsulta && (
               <div style={{ color: 'var(--danger)', fontSize: '14px', marginTop: '5px' }}>

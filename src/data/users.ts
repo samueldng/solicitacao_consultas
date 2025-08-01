@@ -210,6 +210,22 @@ export const defaultUsers: User[] = [
     createdAt: new Date().toISOString()
   },
   {
+    id: '27',
+    username: 'especialidades',
+    password: 'especialidades20258',
+    unitName: 'Centro de Especialidades',
+    isActive: true,
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: '28',
+    username: 'policlinica',
+    password: 'policlinica20259',
+    unitName: 'Policlinica',
+    isActive: true,
+    createdAt: new Date().toISOString()
+  },
+  {
     id: 'admin',
     username: 'admin',
     password: 'ti@2025',

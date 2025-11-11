@@ -25,7 +25,6 @@ const RequestForm: React.FC = () => {
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   // Função para obter o ID da unidade pelo nome
-  // Função para obter o ID da unidade pelo nome
   const getUnidadeIdByName = (unitName: string): string => {
     const unidadeMap: {[key: string]: string} = {
       'Centro de Saude Aldeia': '1',
@@ -60,35 +59,31 @@ const RequestForm: React.FC = () => {
     return unidadeMap[unitName] || '';
   };
 
-  // useEffect para definir automaticamente a unidade do usuário logado
+
   useEffect(() => {
-    console.log('useEffect executado - user:', user);
     if (user && user.unitName && user.username !== 'admin') {
       const unidadeId = getUnidadeIdByName(user.unitName);
-      console.log('Definindo unidade:', user.unitName, '-> ID:', unidadeId);
       if (unidadeId) {
         setFormData(prev => ({
           ...prev,
           unidadeSolicitante: unidadeId
         }));
-      } else {
-        console.error('Unidade não encontrada no mapeamento:', user.unitName);
       }
     }
   }, [user]);
 
-  // Função para validar CPF
+
   const validateCPF = (cpf: string): boolean => {
     // Remove caracteres não numéricos
     const cleanCPF = cpf.replace(/\D/g, '');
     
-    // Verifica se tem 11 dígitos
+
     if (cleanCPF.length !== 11) return false;
     
-    // Verifica se todos os dígitos são iguais
+
     if (/^(\d)\1{10}$/.test(cleanCPF)) return false;
     
-    // Validação do algoritmo do CPF
+
     let sum = 0;
     for (let i = 0; i < 9; i++) {
       sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
@@ -108,16 +103,16 @@ const RequestForm: React.FC = () => {
     return true;
   };
 
-  // Função para validar telefone
+
   const validatePhone = (phone: string): boolean => {
     // Remove caracteres não numéricos
     const cleanPhone = phone.replace(/\D/g, '');
     
-    // Verifica se tem 10 ou 11 dígitos (com ou sem 9º dígito)
+
     return cleanPhone.length === 10 || cleanPhone.length === 11;
   };
 
-  // Função para formatar CPF em tempo real
+
   const formatCPF = (value: string): string => {
     // Remove tudo que não é dígito
     const cleanValue = value.replace(/\D/g, '');
@@ -137,7 +132,7 @@ const RequestForm: React.FC = () => {
     }
   };
 
-  // Função para formatar telefone em tempo real
+
   const formatPhone = (value: string): string => {
     // Remove tudo que não é dígito
     const cleanValue = value.replace(/\D/g, '');
@@ -157,16 +152,16 @@ const RequestForm: React.FC = () => {
     }
   };
 
-  // Função para validar CNS - Cartão Nacional de Saúde
+
   const validateCNS = (cns: string): boolean => {
-    // Remove todos os caracteres não numéricos
+
     const cleanCNS = cns.replace(/\D/g, '');
     
     if (cleanCNS.length !== 15) {
       return false;
     }
     
-    // Calcula a soma ponderada
+
     const sum = cleanCNS
       .split('')
       .reduce((acc, digit, index) => acc + parseInt(digit) * (15 - index), 0);
@@ -174,37 +169,36 @@ const RequestForm: React.FC = () => {
     return sum % 11 === 0;
   };
 
-  // Função para formatar CNS (apenas números)
+
   const formatCNS = (value: string): string => {
     const numbers = value.replace(/\D/g, '');
     return numbers.slice(0, 15); // Limita a 15 dígitos
   };
 
   // Função para validar todos os campos
-  // Função para validar todos os campos
   const validateForm = (): boolean => {
     const newErrors: {[key: string]: string} = {};
   
-    // Validar nome do paciente
+
     if (!formData.nomePaciente.trim()) {
       newErrors.nomePaciente = 'Nome do paciente é obrigatório';
     } else if (formData.nomePaciente.trim().length < 2) {
       newErrors.nomePaciente = 'Nome deve ter pelo menos 2 caracteres';
     }
   
-    // Validar CPF
+
     if (!formData.cpfPaciente.trim()) {
       newErrors.cpfPaciente = 'CPF é obrigatório';
     } else if (!validateCPF(formData.cpfPaciente)) {
       newErrors.cpfPaciente = 'CPF inválido';
     }
   
-    // Validar CNS (opcional, mas se preenchido deve ser válido)
+
     if (formData.cns.trim() && !validateCNS(formData.cns)) {
       newErrors.cns = 'CNS inválido - deve conter 15 dígitos válidos';
     }
   
-    // Validar unidade solicitante (deve estar preenchida automaticamente)
+
     if (!formData.unidadeSolicitante) {
       if (!user) {
         newErrors.unidadeSolicitante = 'Erro: Usuário não está logado';
@@ -222,36 +216,36 @@ const RequestForm: React.FC = () => {
       }
     }
   
-    // Validar telefone
+
     if (!formData.numeroCelular.trim()) {
       newErrors.numeroCelular = 'Número de celular é obrigatório';
     } else if (!validatePhone(formData.numeroCelular)) {
       newErrors.numeroCelular = 'Número de telefone inválido';
     }
   
-    // Validar tipo de consulta
+
     if (!formData.tipoConsulta) {
       newErrors.tipoConsulta = 'Tipo de consulta é obrigatório';
     }
   
-    // Validar observação (obrigatória)
+
     if (!formData.observacao.trim()) {
       newErrors.observacao = 'Observação é obrigatória';
     }
   
-    // Validar nome do solicitante
+
     if (!formData.nomeSolicitante.trim()) {
       newErrors.nomeSolicitante = 'Nome do solicitante é obrigatório';
     } else if (formData.nomeSolicitante.trim().length < 2) {
       newErrors.nomeSolicitante = 'Nome deve ter pelo menos 2 caracteres';
     }
   
-    // Validar especialidade (obrigatória apenas se o tipo de consulta não for 'exame')
+
     if (formData.tipoConsulta !== 'exame' && !formData.especialidade) {
       newErrors.especialidade = 'Especialidade é obrigatória';
     }
 
-    // Validar tipo de exame (obrigatório apenas se o tipo de consulta for 'exame')
+
     if (formData.tipoConsulta === 'exame' && !formData.tipoExame) {
       newErrors.tipoExame = 'Tipo de exame é obrigatório';
     }
@@ -264,7 +258,7 @@ const RequestForm: React.FC = () => {
     const { name, value } = e.target;
     let formattedValue = value;
 
-    // Aplicar formatação específica em tempo real
+
     if (name === 'cpfPaciente') {
       formattedValue = formatCPF(value);
     } else if (name === 'cns') {
@@ -278,7 +272,7 @@ const RequestForm: React.FC = () => {
       [name]: formattedValue
     }));
 
-    // Limpar erro do campo quando o usuário começar a digitar
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -290,7 +284,7 @@ const RequestForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validar formulário antes de enviar
+
     if (!validateForm()) {
       setMessage('Por favor, corrija os erros antes de enviar.');
       setMessageType('error');
@@ -301,41 +295,35 @@ const RequestForm: React.FC = () => {
     setMessage('');
     setMessageType('');
     
-    // URL da função Netlify (proxy)
+
     const proxyUrl = '/.netlify/functions/google-sheets-proxy';
     
-    // Mapear IDs para nomes completos
+
     const unidadeNome = getUnidadeNome(formData.unidadeSolicitante);
     const especialidadeNome = getEspecialidadeNome(formData.especialidade);
     
-    // Dados a serem enviados com nomes completos
+
     const dataToSend = {
       ...formData,
       unidadeSolicitante: unidadeNome,
       especialidade: especialidadeNome
     };
     
-    // ✅ ADICIONE ESTE DEBUG AQUI:
-    console.log('=== DEBUG DADOS ENVIADOS ===');
-    console.log('FormData original:', formData);
-    console.log('CNS no formData:', formData.cns);
-    console.log('DataToSend completo:', dataToSend);
-    console.log('CNS no dataToSend:', dataToSend.cns);
-    console.log('===============================');
+
     
     try {
       const response = await axios.post(proxyUrl, dataToSend, {
         headers: {
           'Content-Type': 'application/json',
         },
-        timeout: 15000, // 15 segundos de timeout
+        timeout: 15000
       });
       
       if (response.data.success) {
         setMessage('Solicitação enviada com sucesso!');
         setMessageType('success');
         
-        // Limpar formulário após sucesso (mantendo a unidade)
+
         setFormData({
           nomePaciente: '',
           cpfPaciente: '',
@@ -343,7 +331,7 @@ const RequestForm: React.FC = () => {
           unidadeSolicitante: user?.unitName || '',
           numeroCelular: '',
           tipoConsulta: '',
-          tipoExame: '', // Incluir o novo campo
+          tipoExame: ''
           observacao: '',
           nomeSolicitante: '',
           especialidade: ''
@@ -377,7 +365,7 @@ const RequestForm: React.FC = () => {
     }
   };
 
-  // Função para obter o nome da unidade pelo ID
+
   const getUnidadeNome = (id: string): string => {
     const unidades: {[key: string]: string} = {
       '1': '1 Centro de Saude Aldeia',
@@ -412,7 +400,7 @@ const RequestForm: React.FC = () => {
     return unidades[id] || id;
   };
 
-  // Função para obter o nome da especialidade pelo ID
+
   const getEspecialidadeNome = (id: string): string => {
     const especialidades: {[key: string]: string} = {
       '1': '1. MÉDICO CARDIOLOGISTA',
@@ -433,7 +421,7 @@ const RequestForm: React.FC = () => {
     return especialidades[id] || id;
   };
 
-  // Função para lidar com o logout
+
   const handleLogout = () => {
     logout();
   };
@@ -441,7 +429,7 @@ const RequestForm: React.FC = () => {
   return (
     <div className="container">
       <div className="card" style={{ maxWidth: '800px', margin: '20px auto' }}>
-        {/* Cabeçalho com botão de logout */}
+
         <div style={{ position: 'relative', marginBottom: '30px' }}>
           <button 
             type="button" 
@@ -757,7 +745,7 @@ const RequestForm: React.FC = () => {
         </form>
       </div>
       
-      {/* Rodapé com assinatura do setor */}
+      
       <footer style={{
         textAlign: 'center',
         marginTop: '30px',

@@ -1,14 +1,12 @@
 const https = require('https');
 
 exports.handler = async (event, context) => {
-  // Configurar CORS headers
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
 
-  // Responder a requisições OPTIONS (preflight)
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -17,7 +15,6 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Apenas aceitar POST
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -27,13 +24,10 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // URL do seu Google Apps Script
     const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbzcvNtROd4AhxJSZJy7SCJQSz4dsmA_Q5hzfCFdEfHu7EhwzVZ-NHHW7a-hShJtF_BJ/exec';
     
-    // Dados recebidos do frontend
     const formData = JSON.parse(event.body);
     
-    // Fazer a requisição para o Google Apps Script
     const response = await makeRequest(googleScriptUrl, formData);
     
     return {
@@ -61,7 +55,6 @@ exports.handler = async (event, context) => {
   }
 };
 
-// Função auxiliar para fazer requisições HTTPS
 function makeRequest(url, data) {
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify(data);
@@ -86,7 +79,6 @@ function makeRequest(url, data) {
           const parsedData = JSON.parse(responseData);
           resolve(parsedData);
         } catch (e) {
-          // Se não conseguir fazer parse, retorna o texto bruto
           resolve({ rawResponse: responseData });
         }
       });

@@ -41,13 +41,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
-    console.log('Tentando login com:', { username, password });
-    
     const foundUser = users.find(
       u => u.username === username && u.password === password && u.isActive
     );
-    
-    console.log('Usuário encontrado:', foundUser);
 
     if (foundUser) {
       const updatedUser = {
@@ -55,10 +51,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         lastLogin: new Date().toISOString()
       };
       
-      // Salvar apenas o usuário logado (sem senha por segurança)
       const userToStore = {
         ...updatedUser,
-        password: '' // Remover senha do localStorage
+        password: ''
       };
       
       setUser(updatedUser);
